@@ -35,7 +35,6 @@ def shutdown():
 
 
 def axes():
-    # ... (bez zmian)
     glBegin(GL_LINES)
     glColor3f(1.0, 0.0, 0.0);
     glVertex3f(-5.0, 0.0, 0.0);
@@ -83,7 +82,7 @@ def render(time):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
-    # rzełączanie trybów
+    # Przełączanie trybów
     if camera_mode:
         # Aktualizacja kątów i promienia na podstawie myszy
         if left_mouse_button_pressed:
