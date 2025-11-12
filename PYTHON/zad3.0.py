@@ -15,12 +15,9 @@ pix2angle = 1.0
 
 left_mouse_button_pressed = 0
 mouse_x_pos_old = 0
-mouse_y_pos_old = 0  # <-- NOWA ZMIENNA (dla śledzenia Y myszy)
+mouse_y_pos_old = 0  # nowa zmienna dla śledzenia Y myszy
 delta_x = 0
-delta_y = 0  # <-- NOWA ZMIENNA (dla zmiany Y myszy)
-
-
-# =================================================================
+delta_y = 0  # nowa zmienna dla zmiany Y myszy
 
 
 def startup():
@@ -52,7 +49,6 @@ def axes():
 
 
 def example_object():
-    """ Rysuje obiekt przykładowy (taki sam jak w kodzie startowym) """
     glColor3f(1.0, 1.0, 1.0)
 
     quadric = gluNewQuadric()
@@ -86,13 +82,9 @@ def example_object():
     glRotatef(-90, 1.0, 0.0, 0.0)
     gluDeleteQuadric(quadric)
 
-
-# =================================================================
-# MODYFIKACJA FUNKCJI RENDER
-# =================================================================
 def render(time):
     global theta
-    global phi  # <-- Używamy globalnej zmiennej phi
+    global phi  # globalna zmienna phi
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
@@ -102,18 +94,15 @@ def render(time):
 
     if left_mouse_button_pressed:
         theta += delta_x * pix2angle
-        phi += delta_y * pix2angle  # <-- DODANE: Aktualizuj kąt phi (oś X)
+        phi += delta_y * pix2angle  # aktualizuj kąt phi (oś X)
 
     glRotatef(theta, 0.0, 1.0, 0.0)  # Obrót wokół Y (zależny od delta_x)
-    glRotatef(phi, 1.0, 0.0, 0.0)  # <-- DODANE: Obrót wokół X (zależny od delta_y)
+    glRotatef(phi, 1.0, 0.0, 0.0)  # Obrót wokół X (zależny od delta_y)
 
     axes()
     example_object()
 
     glFlush()
-
-
-# =================================================================
 
 
 def update_viewport(window, width, height):
@@ -139,21 +128,15 @@ def keyboard_key_callback(window, key, scancode, action, mods):
         glfwSetWindowShouldClose(window, GLFW_TRUE)
 
 
-# =================================================================
-# MODYFIKACJA FUNKCJI MOUSE_MOTION
-# =================================================================
 def mouse_motion_callback(window, x_pos, y_pos):
     global delta_x, mouse_x_pos_old
-    global delta_y, mouse_y_pos_old  # <-- DODANE
+    global delta_y, mouse_y_pos_old
 
     delta_x = x_pos - mouse_x_pos_old
     mouse_x_pos_old = x_pos
 
-    delta_y = y_pos - mouse_y_pos_old  # <-- DODANE: Oblicz zmianę w pionie
-    mouse_y_pos_old = y_pos  # <-- DODANE: Zapisz starą pozycję Y
-
-
-# =================================================================
+    delta_y = y_pos - mouse_y_pos_old  # Oblicz zmianę w pionie
+    mouse_y_pos_old = y_pos  # Zapisz starą pozycję Y
 
 
 def mouse_button_callback(window, button, action, mods):
