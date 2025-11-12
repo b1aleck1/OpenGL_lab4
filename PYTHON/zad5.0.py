@@ -285,7 +285,6 @@ def main():
     # --- POPRAWKA INICJALIZACJI VIEWPORTU ---
     width, height = glfwGetFramebufferSize(window)
     update_viewport(window, width, height)
-    # ------------------------------------------
 
     startup()
     while not glfwWindowShouldClose(window):
