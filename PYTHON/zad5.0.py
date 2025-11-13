@@ -9,18 +9,15 @@ from glfw.GLFW import *
 from OpenGL.GL import *
 from OpenGL.GLU import *
 
-# =================================================================
-# ZMIENNE GLOBALNE I USTAWIENIA
-# =================================================================
 # Rozmiar mapy (musi być 2^n + 1)
 MAP_SIZE = 129
 HEIGHTMAP = np.zeros((MAP_SIZE, MAP_SIZE))
-TERRAIN_SCALE = 5.0  # Skala terenu (X/Z)
-HEIGHT_SCALE = 30.0  # Skala wysokości (Y)
+TERRAIN_SCALE = 5.0
+HEIGHT_SCALE = 30.0
 
 # Stałe kolizji z terenem
 MIN_FLIGHT_ALTITUDE = 5.0  # Minimalna wysokość "latania" nad ziemią
-MAX_FLIGHT_ALTITUDE = 100.0  # Maksymalna wysokość "latania" nad ziemią
+MAX_FLIGHT_ALTITUDE = 200.0  # Maksymalna wysokość "latania" nad ziemią
 
 # Zmienne kamery FPP (First Person Perspective)
 camera_pos = np.array([MAP_SIZE * TERRAIN_SCALE / 2, 50.0, MAP_SIZE * TERRAIN_SCALE / 2])
@@ -39,24 +36,20 @@ pix2angle = 0.1
 keys = {}
 
 
-# =================================================================
-
-# =================================================================
 # GENEROWANIE TERENU (FRAKTAL PLAZMOWY)
-# =================================================================
 
 def get_height(x, y):
-    """ Bezpieczne pobieranie wysokości z mapy (z zawijaniem) """
+    # Bezpieczne pobieranie wysokości z mapy (z zawijaniem)
     return HEIGHTMAP[x % (MAP_SIZE - 1)][y % (MAP_SIZE - 1)]
 
 
 def set_height(x, y, val):
-    """ Bezpieczne ustawianie wysokości z zawijaniem """
+    # Bezpieczne ustawianie wysokości z zawijaniem
     HEIGHTMAP[x % (MAP_SIZE - 1)][y % (MAP_SIZE - 1)] = val
 
 
 def diamond_square_step(step, roughness):
-    """ Wykonuje jeden krok algorytmu Diamond-Square """
+    # Wykonuje jeden krok algorytmu Diamond-Square
     half_step = step // 2
     if half_step < 1:
         return
@@ -93,11 +86,8 @@ def generate_terrain():
     diamond_square_step(MAP_SIZE - 1, 1.0)  # Start rekursji
 
 
-# =================================================================
-# OBLICZANIE WYSOKOŚCI (KOLIZJE)
-# =================================================================
 def get_interpolated_height(cam_x, cam_z):
-    """ Oblicza dokładną wysokość terenu pod kamerą przez interpolację biliniową """
+    # Oblicza dokładną wysokość terenu pod kamerą przez interpolację biliniową
 
     # Przelicz pozycję kamery w świecie na pozycję w siatce (grid)
     grid_x = cam_x / TERRAIN_SCALE
@@ -128,8 +118,6 @@ def get_interpolated_height(cam_x, cam_z):
     return current_terrain_height_raw * HEIGHT_SCALE
 
 
-# =================================================================
-
 def startup():
     global mouse_x_pos_old, mouse_y_pos_old
 
@@ -154,7 +142,7 @@ def axes():
 
 
 def draw_terrain():
-    """ Rysuje teren na podstawie HEIGHTMAP """
+    # Rysuje teren na podstawie HEIGHTMAP
 
     min_h = np.min(HEIGHTMAP)
     max_h = np.max(HEIGHTMAP)
@@ -195,14 +183,14 @@ def render(time):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
-    # --- Aktualizacja kątów kamery na podstawie myszy ---
+    # Aktualizacja kątów kamery na podstawie myszy
     camera_yaw += delta_x * pix2angle
     camera_pitch -= delta_y * pix2angle
 
     if camera_pitch > 89.0: camera_pitch = 89.0
     if camera_pitch < -89.0: camera_pitch = -89.0
 
-    # --- Obliczanie wektorów kierunkowych kamery ---
+    # Obliczanie wektorów kierunkowych kamery
     yaw_rad = math.radians(camera_yaw)
     pitch_rad = math.radians(camera_pitch)
 
@@ -216,7 +204,7 @@ def render(time):
     right = np.cross(forward, np.array([0.0, 1.0, 0.0]))
     right = right / np.linalg.norm(right)
 
-    # --- Aktualizacja pozycji kamery (sterowanie klawiszami) ---
+    # Aktualizacja pozycji kamery (sterowanie klawiszami)
     if keys.get(GLFW_KEY_W):
         camera_pos += forward * camera_speed
     if keys.get(GLFW_KEY_S):
@@ -230,14 +218,11 @@ def render(time):
     if keys.get(GLFW_KEY_LEFT_CONTROL):
         camera_pos[1] -= camera_speed
 
-    # --- Implementacja "nieskończonego" terenu (zawijanie X/Z) ---
+    # Implementacja "nieskończonego" terenu (zawijanie X/Z)
     camera_pos[0] = camera_pos[0] % ((MAP_SIZE - 1) * TERRAIN_SCALE)
     camera_pos[2] = camera_pos[2] % ((MAP_SIZE - 1) * TERRAIN_SCALE)
 
-    # ============================================================
-    # NOWA LOGIKA: Ograniczenie wysokości (Kolizja z ziemią)
-    # ============================================================
-
+    # Ograniczenie wysokości (Kolizja z ziemią)
     # 1. Pobierz wysokość terenu DOKŁADNIE pod kamerą
     ground_height = get_interpolated_height(camera_pos[0], camera_pos[2])
 
@@ -251,7 +236,6 @@ def render(time):
 
     if camera_pos[1] > max_altitude:
         camera_pos[1] = max_altitude
-    # ============================================================
 
     look_at = camera_pos + forward
 
@@ -328,7 +312,6 @@ def main():
     glfwSetMouseButtonCallback(window, mouse_button_callback)
     glfwSwapInterval(1)
 
-    # Poprawna inicjalizacja viewportu
     width, height = glfwGetFramebufferSize(window)
     update_viewport(window, width, height)
 
