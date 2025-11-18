@@ -111,7 +111,7 @@ def render(time):
 
         # Ustawienie wektora "up"
         # Jeśli patrzymy prosto z góry lub z dołu, 'up' musi być (0,0,-1) lub (0,0,1)
-        # Ale dzięki ograniczeniu phi do [-89, 89], (0,1,0) jest zawsze bezpieczne.
+        # Ale dzięki ograniczeniu phi do [-90, 90], (0,1,0) jest zawsze bezpieczne.
         up_vector = [0.0, 1.0, 0.0]
 
         gluLookAt(x_eye, y_eye, z_eye,
