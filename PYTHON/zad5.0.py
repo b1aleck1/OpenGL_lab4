@@ -215,7 +215,7 @@ def render(time):
         camera_pos += right * camera_speed
     if keys.get(GLFW_KEY_SPACE):
         camera_pos[1] += camera_speed
-    if keys.get(GLFW_KEY_LEFT_CONTROL):
+    if keys.get(GLFW_KEY_LEFT_SHIFT):
         camera_pos[1] -= camera_speed
 
     # Implementacja "nieskończonego" terenu (zawijanie X/Z)

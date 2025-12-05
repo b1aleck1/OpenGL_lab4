@@ -20,7 +20,7 @@ mouse_y_pos_old = 0
 delta_x = 0
 delta_y = 0
 
-scale = 1.0  # Przywrócone dla trybu 3.5
+scale = 1.0
 camera_mode = True  # True = Tryb Kamery (4.0), False = Tryb Obiektu (3.5)
 
 
@@ -36,14 +36,14 @@ def shutdown():
 
 def axes():
     glBegin(GL_LINES)
-    glColor3f(1.0, 0.0, 0.0);
-    glVertex3f(-5.0, 0.0, 0.0);
+    glColor3f(1.0, 0.0, 0.0)
+    glVertex3f(-5.0, 0.0, 0.0)
     glVertex3f(5.0, 0.0, 0.0)
-    glColor3f(0.0, 1.0, 0.0);
-    glVertex3f(0.0, -5.0, 0.0);
+    glColor3f(0.0, 1.0, 0.0)
+    glVertex3f(0.0, -5.0, 0.0)
     glVertex3f(0.0, 5.0, 0.0)
-    glColor3f(0.0, 0.0, 1.0);
-    glVertex3f(0.0, 0.0, -5.0);
+    glColor3f(0.0, 0.0, 1.0)
+    glVertex3f(0.0, 0.0, -5.0)
     glVertex3f(0.0, 0.0, 5.0)
     glEnd()
 
@@ -52,26 +52,26 @@ def example_object():
     glColor3f(1.0, 1.0, 1.0)
     quadric = gluNewQuadric()
     gluQuadricDrawStyle(quadric, GLU_LINE)
-    glRotatef(90, 1.0, 0.0, 0.0);
+    glRotatef(90, 1.0, 0.0, 0.0)
     glRotatef(-90, 0.0, 1.0, 0.0)
     gluSphere(quadric, 1.5, 10, 10)
-    glTranslatef(0.0, 0.0, 1.1);
-    gluCylinder(quadric, 1.0, 1.5, 1.5, 10, 5);
+    glTranslatef(0.0, 0.0, 1.1)
+    gluCylinder(quadric, 1.0, 1.5, 1.5, 10, 5)
     glTranslatef(0.0, 0.0, -1.1)
-    glTranslatef(0.0, 0.0, -2.6);
-    gluCylinder(quadric, 0.0, 1.0, 1.5, 10, 5);
+    glTranslatef(0.0, 0.0, -2.6)
+    gluCylinder(quadric, 0.0, 1.0, 1.5, 10, 5)
     glTranslatef(0.0, 0.0, 2.6)
-    glRotatef(90, 1.0, 0.0, 1.0);
-    glTranslatef(0.0, 0.0, 1.5);
-    gluCylinder(quadric, 0.1, 0.0, 1.0, 5, 5);
-    glTranslatef(0.0, 0.0, -1.5);
-    glRotatef(-90, 1.0, 0.0, 1.0)
-    glRotatef(-90, 1.0, 0.0, 1.0);
-    glTranslatef(0.0, 0.0, 1.5);
-    gluCylinder(quadric, 0.1, 0.0, 1.0, 5, 5);
-    glTranslatef(0.0, 0.0, -1.5);
     glRotatef(90, 1.0, 0.0, 1.0)
-    glRotatef(90, 0.0, 1.0, 0.0);
+    glTranslatef(0.0, 0.0, 1.5)
+    gluCylinder(quadric, 0.1, 0.0, 1.0, 5, 5)
+    glTranslatef(0.0, 0.0, -1.5)
+    glRotatef(-90, 1.0, 0.0, 1.0)
+    glRotatef(-90, 1.0, 0.0, 1.0)
+    glTranslatef(0.0, 0.0, 1.5)
+    gluCylinder(quadric, 0.1, 0.0, 1.0, 5, 5)
+    glTranslatef(0.0, 0.0, -1.5)
+    glRotatef(90, 1.0, 0.0, 1.0)
+    glRotatef(90, 0.0, 1.0, 0.0)
     glRotatef(-90, 1.0, 0.0, 0.0)
     gluDeleteQuadric(quadric)
 
@@ -82,45 +82,47 @@ def render(time):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
-    # Przełączanie trybów
+    # --- TRYB KAMERY (ZADANIE 4.0 / 4.5) ---
     if camera_mode:
-        # Aktualizacja kątów i promienia na podstawie myszy
         if left_mouse_button_pressed:
             theta += delta_x * pix2angle
             phi += delta_y * pix2angle
 
-            # Ograniczenie kątów
-            theta = theta % 360  # Ograniczenie theta do [0, 360]
-            if phi > 90.0:
-                phi = 90.0
-            elif phi < -90.0:
-                phi = -90.0
+            # --- POPRAWKA 1: Użycie modulo dla obu kątów (pełny obrót) ---
+            theta = theta % 360.0
+            phi = phi % 360.0
 
         if right_mouse_button_pressed:
             R += delta_y * 0.1
-            # Ograniczenie zoomu
+            # --- POPRAWKA 2: Ograniczenie zoomu ---
             if R < 3.0: R = 3.0
             if R > 20.0: R = 20.0
 
+        # Przeliczenie stopni na radiany
         theta_rad = theta * math.pi / 180.0
         phi_rad = phi * math.pi / 180.0
 
+        # Obliczenie pozycji oka w układzie sferycznym
         x_eye = R * math.cos(theta_rad) * math.cos(phi_rad)
         y_eye = R * math.sin(phi_rad)
         z_eye = R * math.sin(theta_rad) * math.cos(phi_rad)
 
-        # Ustawienie wektora "up"
-        # Jeśli patrzymy prosto z góry lub z dołu, 'up' musi być (0,0,-1) lub (0,0,1)
-        # Ale dzięki ograniczeniu phi do [-90, 90], (0,1,0) jest zawsze bezpieczne.
-        up_vector = [0.0, 1.0, 0.0]
+        # --- POPRAWKA 3: Obsługa wektora UP przy przejściu przez bieguny ---
+        # Jeśli phi jest między 90 a 270 stopni, jesteśmy "do góry nogami"
+        if 90.0 < phi < 270.0:
+            up_vector = [0.0, -1.0, 0.0]  # Odwracamy wektor UP
+        else:
+            up_vector = [0.0, 1.0, 0.0]   # Standardowy wektor UP
 
         gluLookAt(x_eye, y_eye, z_eye,
-                  0.0, 0.0, 0.0, up_vector[0], up_vector[1], up_vector[2])
+                  0.0, 0.0, 0.0,
+                  up_vector[0], up_vector[1], up_vector[2])
 
+    # --- TRYB OBIEKTU (ZADANIE 3.5) ---
     else:
-        # TRYB OBIEKTU (ZADANIE 3.5)
-        gluLookAt(0.0, 0.0, 10.0,  # Kamera jest nieruchoma
-                  0.0, 0.0, 0.0, 0.0, 1.0, 0.0)
+        gluLookAt(0.0, 0.0, 10.0,
+                  0.0, 0.0, 0.0,
+                  0.0, 1.0, 0.0)
 
         if left_mouse_button_pressed:
             theta += delta_x * pix2angle
@@ -161,13 +163,13 @@ def keyboard_key_callback(window, key, scancode, action, mods):
         if key == GLFW_KEY_ESCAPE:
             glfwSetWindowShouldClose(window, GLFW_TRUE)
 
-        # Przełącznik trybu
+        # --- POPRAWKA 4: Przełączanie trybów klawiaturą ---
         if key == GLFW_KEY_M:
             camera_mode = not camera_mode
             if camera_mode:
-                print("Tryb Kamery (4.0/4.5)")
+                print("Tryb: Poruszanie kamerą")
             else:
-                print("Tryb Obiektu (3.5)")
+                print("Tryb: Obracanie obiektem")
 
 
 def mouse_motion_callback(window, x_pos, y_pos):
@@ -193,7 +195,7 @@ def mouse_button_callback(window, button, action, mods):
 def main():
     if not glfwInit():
         sys.exit(-1)
-    window = glfwCreateWindow(400, 400, "Lab 4 (Ocena 4.5)", None, None)
+    window = glfwCreateWindow(400, 400, "Lab 4 - Poprawione (4.5)", None, None)
     if not window:
         glfwTerminate()
         sys.exit(-1)
