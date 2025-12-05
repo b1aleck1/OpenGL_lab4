@@ -82,19 +82,19 @@ def render(time):
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     glLoadIdentity()
 
-    # --- TRYB KAMERY (ZADANIE 4.0 / 4.5) ---
+    # TRYB KAMERY (ZADANIE 4.0 / 4.5)
     if camera_mode:
         if left_mouse_button_pressed:
             theta += delta_x * pix2angle
             phi += delta_y * pix2angle
 
-            # --- POPRAWKA 1: Użycie modulo dla obu kątów (pełny obrót) ---
+            # Użycie modulo dla obu kątów (pełny obrót)
             theta = theta % 360.0
             phi = phi % 360.0
 
         if right_mouse_button_pressed:
             R += delta_y * 0.1
-            # --- POPRAWKA 2: Ograniczenie zoomu ---
+            # Ograniczenie zoomu
             if R < 3.0: R = 3.0
             if R > 20.0: R = 20.0
 
@@ -107,7 +107,7 @@ def render(time):
         y_eye = R * math.sin(phi_rad)
         z_eye = R * math.sin(theta_rad) * math.cos(phi_rad)
 
-        # --- POPRAWKA 3: Obsługa wektora UP przy przejściu przez bieguny ---
+        # Obsługa wektora UP przy przejściu przez bieguny
         # Jeśli phi jest między 90 a 270 stopni, jesteśmy "do góry nogami"
         if 90.0 < phi < 270.0:
             up_vector = [0.0, -1.0, 0.0]  # Odwracamy wektor UP
@@ -118,7 +118,7 @@ def render(time):
                   0.0, 0.0, 0.0,
                   up_vector[0], up_vector[1], up_vector[2])
 
-    # --- TRYB OBIEKTU (ZADANIE 3.5) ---
+    # TRYB OBIEKTU (ZADANIE 3.5)
     else:
         gluLookAt(0.0, 0.0, 10.0,
                   0.0, 0.0, 0.0,
@@ -163,7 +163,7 @@ def keyboard_key_callback(window, key, scancode, action, mods):
         if key == GLFW_KEY_ESCAPE:
             glfwSetWindowShouldClose(window, GLFW_TRUE)
 
-        # --- POPRAWKA 4: Przełączanie trybów klawiaturą ---
+        # Przełączanie trybów klawiaturą "M"
         if key == GLFW_KEY_M:
             camera_mode = not camera_mode
             if camera_mode:
